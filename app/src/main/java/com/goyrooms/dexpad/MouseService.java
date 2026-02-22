@@ -2,27 +2,24 @@ package com.goyrooms.dexpad;
 
 import android.app.Service;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.graphics.PixelFormat;
 import android.graphics.Point;
-import android.hardware.input.InputManager;
+import android.os.Build;
 import android.os.IBinder;
-import android.os.SystemClock;
+import android.util.Log;
 import android.view.Display;
 import android.view.Gravity;
-import android.view.InputDevice;
-import android.view.LayoutInflater;
-import android.view.MotionEvent;
-import android.view.View;
 import android.view.WindowManager;
 import android.widget.ImageView;
-
-import java.lang.reflect.Method;
+import android.widget.Toast;
 
 public class MouseService extends Service {
 
+    private static final String TAG = "DexPad_Service";
+    
     private WindowManager windowManager;
     private ImageView cursorView;
-    private View panelView;
     private WindowManager.LayoutParams cursorParams;
 
     private float cursorX = 500;
@@ -30,149 +27,136 @@ public class MouseService extends Service {
     private int screenWidth;
     private int screenHeight;
 
-    private float lastX, lastY;
-
-    private InputManager inputManager;
-    private Method injectMethod;
+    @Override
+    public IBinder onBind(Intent intent) {
+        return null;
+    }
 
     @Override
-    public IBinder onBind(Intent intent) { return null; }
+    public int onStartCommand(Intent intent, int flags, int startId) {
+        Log.d(TAG, "onStartCommand called");
+        Toast.makeText(this, "Initializing Mouse Service...", Toast.LENGTH_SHORT).show();
+        return START_STICKY;
+    }
 
     @Override
     public void onCreate() {
         super.onCreate();
+        Log.d(TAG, "Service onCreate called");
 
         try {
-            inputManager = (InputManager) getSystemService(INPUT_SERVICE);
-            injectMethod = InputManager.class.getDeclaredMethod(
-                    "injectInputEvent",
-                    android.view.InputEvent.class,
-                    int.class
-            );
-            injectMethod.setAccessible(true);
+            // Check overlay permission first
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                if (!android.provider.Settings.canDrawOverlays(this)) {
+                    Log.w(TAG, "Overlay permission not granted");
+                    Toast.makeText(this, "Overlay permission required", Toast.LENGTH_LONG).show();
+                    stopSelf();
+                    return;
+                }
+            }
+
+            Log.d(TAG, "Overlay permission granted, continuing...");
+            
+            windowManager = (WindowManager) getSystemService(WINDOW_SERVICE);
+            
+            if (windowManager == null) {
+                Log.e(TAG, "WindowManager is null!");
+                Toast.makeText(this, "Error: WindowManager unavailable", Toast.LENGTH_SHORT).show();
+                stopSelf();
+                return;
+            }
+
+            // Get screen dimensions
+            try {
+                Display display = windowManager.getDefaultDisplay();
+                Point size = new Point();
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
+                    display.getRealSize(size);
+                } else {
+                    display.getSize(size);
+                }
+                screenWidth = size.x;
+                screenHeight = size.y;
+                Log.d(TAG, "Screen dimensions: " + screenWidth + "x" + screenHeight);
+            } catch (Exception e) {
+                Log.e(TAG, "Error getting screen dimensions", e);
+                screenWidth = 1080;
+                screenHeight = 1920;
+            }
+
+            // Setup cursor view
+            setupCursor();
+            
+            Log.d(TAG, "Service initialized successfully");
+            Toast.makeText(this, "Mouse Service Ready", Toast.LENGTH_SHORT).show();
+            
         } catch (Exception e) {
-            e.printStackTrace();
+            Log.e(TAG, "Fatal error in onCreate", e);
+            Toast.makeText(this, "Service error: " + e.getMessage(), Toast.LENGTH_LONG).show();
+            stopSelf();
         }
-
-        windowManager = (WindowManager) getSystemService(WINDOW_SERVICE);
-
-        Display display = windowManager.getDefaultDisplay();
-        Point size = new Point();
-        display.getRealSize(size);
-        screenWidth = size.x;
-        screenHeight = size.y;
-
-        setupCursor();
-        setupPanel();
     }
 
     private void setupCursor() {
-        cursorView = new ImageView(this);
-        cursorView.setImageResource(R.drawable.ic_mouse_pointer);
-
-        cursorParams = new WindowManager.LayoutParams(
-                WindowManager.LayoutParams.WRAP_CONTENT,
-                WindowManager.LayoutParams.WRAP_CONTENT,
-                WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY,
-                WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE
-                        | WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE,
-                PixelFormat.TRANSLUCENT);
-
-        cursorParams.gravity = Gravity.TOP | Gravity.LEFT;
-        cursorParams.x = (int) cursorX;
-        cursorParams.y = (int) cursorY;
-
-        windowManager.addView(cursorView, cursorParams);
-    }
-
-    private void setupPanel() {
-        panelView = LayoutInflater.from(this).inflate(R.layout.activity_main, null);
-
-        WindowManager.LayoutParams params = new WindowManager.LayoutParams(
-                WindowManager.LayoutParams.WRAP_CONTENT,
-                WindowManager.LayoutParams.WRAP_CONTENT,
-                WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY,
-                WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE,
-                PixelFormat.TRANSLUCENT);
-
-        params.gravity = Gravity.BOTTOM | Gravity.END;
-        windowManager.addView(panelView, params);
-
-        panelView.findViewById(R.id.touchpad).setOnTouchListener((v, e) -> {
-            if (e.getAction() == MotionEvent.ACTION_DOWN) {
-                lastX = e.getRawX();
-                lastY = e.getRawY();
-            } else if (e.getAction() == MotionEvent.ACTION_MOVE) {
-                float dx = e.getRawX() - lastX;
-                float dy = e.getRawY() - lastY;
-
-                moveMouse(dx, dy);
-
-                lastX = e.getRawX();
-                lastY = e.getRawY();
-            }
-            return true;
-        });
-
-        panelView.findViewById(R.id.btn_left_click)
-                .setOnClickListener(v -> click(MotionEvent.BUTTON_PRIMARY));
-
-        panelView.findViewById(R.id.btn_right_click)
-                .setOnClickListener(v -> click(MotionEvent.BUTTON_SECONDARY));
-    }
-
-    private void moveMouse(float dx, float dy) {
-        cursorX = Math.max(0, Math.min(screenWidth, cursorX + dx));
-        cursorY = Math.max(0, Math.min(screenHeight, cursorY + dy));
-
-        cursorParams.x = (int) cursorX;
-        cursorParams.y = (int) cursorY;
-        windowManager.updateViewLayout(cursorView, cursorParams);
-
-        inject(MotionEvent.ACTION_HOVER_MOVE, 0);
-    }
-
-    private void click(int button) {
-        inject(MotionEvent.ACTION_BUTTON_PRESS, button);
-        inject(MotionEvent.ACTION_BUTTON_RELEASE, button);
-    }
-
-    private void inject(int action, int button) {
         try {
-            long now = SystemClock.uptimeMillis();
+            Log.d(TAG, "Setting up cursor view");
+            
+            cursorView = new ImageView(this);
+            
+            try {
+                int drawableId = getResources().getIdentifier("ic_mouse_pointer", "drawable", getPackageName());
+                if (drawableId == 0) {
+                    Log.w(TAG, "Drawable ic_mouse_pointer not found, using default");
+                    cursorView.setImageResource(android.R.drawable.ic_dialog_info);
+                } else {
+                    cursorView.setImageResource(drawableId);
+                }
+            } catch (Exception e) {
+                Log.w(TAG, "Error setting cursor image", e);
+                cursorView.setImageResource(android.R.drawable.ic_dialog_info);
+            }
 
-            MotionEvent.PointerProperties[] props = new MotionEvent.PointerProperties[1];
-            props[0] = new MotionEvent.PointerProperties();
-            props[0].id = 0;
-            props[0].toolType = MotionEvent.TOOL_TYPE_MOUSE;
+            cursorParams = new WindowManager.LayoutParams(
+                    100, // width
+                    100, // height
+                    WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY,
+                    WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE
+                            | WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE
+                            | WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS,
+                    PixelFormat.TRANSLUCENT);
 
-            MotionEvent.PointerCoords[] coords = new MotionEvent.PointerCoords[1];
-            coords[0] = new MotionEvent.PointerCoords();
-            coords[0].x = cursorX;
-            coords[0].y = cursorY;
-            coords[0].pressure = 1;
-            coords[0].size = 1;
+            cursorParams.gravity = Gravity.TOP | Gravity.LEFT;
+            cursorParams.x = (int) cursorX;
+            cursorParams.y = (int) cursorY;
 
-            MotionEvent event = MotionEvent.obtain(
-                    now, now,
-                    action,
-                    1,
-                    props,
-                    coords,
-                    0,
-                    button,
-                    1f,
-                    1f,
-                    0,
-                    0,
-                    InputDevice.SOURCE_MOUSE,
-                    0
-            );
-
-            injectMethod.invoke(inputManager, event, 0);
-
+            windowManager.addView(cursorView, cursorParams);
+            Log.d(TAG, "Cursor view added successfully");
+            
         } catch (Exception e) {
-            e.printStackTrace();
+            Log.e(TAG, "Error setting up cursor", e);
+            Toast.makeText(this, "Cursor error: " + e.getMessage(), Toast.LENGTH_LONG).show();
         }
     }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        Log.d(TAG, "onDestroy called");
+        
+        try {
+            if (windowManager != null && cursorView != null) {
+                try {
+                    windowManager.removeView(cursorView);
+                    Log.d(TAG, "Cursor view removed");
+                } catch (IllegalArgumentException e) {
+                    Log.w(TAG, "View was not added or already removed: " + e.getMessage());
+                }
+            }
+        } catch (Exception e) {
+            Log.e(TAG, "Error in onDestroy", e);
+        }
+        
+        Toast.makeText(this, "Mouse Service Stopped", Toast.LENGTH_SHORT).show();
+    }
 }
+

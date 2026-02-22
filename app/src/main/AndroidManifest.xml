@@ -4,8 +4,8 @@
 
     <!-- FORCE MIN SDK FOR TYRON -->
     <uses-sdk
-        android:minSdkVersion="24"
-        android:targetSdkVersion="31" />
+        android:minSdkVersion="26"
+        android:targetSdkVersion="33" />
 
     <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW"/>
     <uses-permission android:name="rikka.shizuku.permission.SHIZUKU"/>
@@ -13,7 +13,7 @@
     <application
         android:allowBackup="true"
         android:label="DexPad"
-        android:theme="@style/Theme.AppCompat.Light.NoActionBar">
+        android:theme="@style/Theme.DexPad">
 
         <activity
             android:name=".MainActivity"

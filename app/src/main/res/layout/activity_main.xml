@@ -1,94 +1,110 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout 
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#121212">
-
-    <Button
-        android:id="@+id/btn_minimize"
-        android:layout_width="40dp"
-        android:layout_height="40dp"
-        android:text="-"
-        android:backgroundTint="#444444"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"/>
-
-    <View
-        android:id="@+id/touchpad"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        android:layout_margin="16dp"
-        android:background="@drawable/touchpad_bg"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintBottom_toTopOf="@+id/button_row"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent" />
+    android:orientation="vertical"
+    android:padding="16dp"
+    android:background="@android:color/white">
 
     <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="TOUCHPAD AREA"
-        android:textColor="#33FFFFFF"
-        android:textSize="24sp"
-        android:textStyle="bold"
-        app:layout_constraintBottom_toBottomOf="@+id/touchpad"
-        app:layout_constraintEnd_toEndOf="@+id/touchpad"
-        app:layout_constraintStart_toStartOf="@+id/touchpad"
-        app:layout_constraintTop_toTopOf="@+id/touchpad" />
-
-    <LinearLayout
-        android:id="@+id/button_row"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:padding="8dp"
-        app:layout_constraintBottom_toBottomOf="parent">
+        android:text="DexPad"
+        android:textSize="32sp"
+        android:textStyle="bold"
+        android:textColor="@android:color/black"
+        android:gravity="center"
+        android:layout_marginBottom="16dp" />
+
+    <TextView
+        android:id="@+id/status_text"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Status: Checking permissions..."
+        android:textSize="16sp"
+        android:textColor="@android:color/black"
+        android:padding="16dp"
+        android:background="#F5F5F5"
+        android:gravity="center"
+        android:layout_marginBottom="24dp" />
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/btn_start_service"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Start Mouse Service"
+        android:textSize="16sp"
+        android:padding="16dp"
+        android:layout_marginBottom="12dp"
+        app:cornerRadius="8dp" />
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/btn_stop_service"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Stop Mouse Service"
+        android:textSize="16sp"
+        android:padding="16dp"
+        android:layout_marginBottom="12dp"
+        app:cornerRadius="8dp"
+        style="@style/Widget.MaterialComponents.Button.OutlinedButton" />
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/btn_request_permission"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Request Shizuku Permission"
+        android:textSize="16sp"
+        android:padding="16dp"
+        app:cornerRadius="8dp"
+        style="@style/Widget.MaterialComponents.Button.TextButton" />
+
+    <Space
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1" />
+
+    <com.google.android.material.card.MaterialCardView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:cardCornerRadius="8dp"
+        app:cardElevation="2dp"
+        android:layout_marginBottom="16dp">
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="60dp"
-            android:orientation="horizontal"
-            android:weightSum="2">
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="16dp">
 
-            <Button
-                android:id="@+id/btn_left_click"
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_weight="1"
-                android:layout_margin="4dp"
-                android:text="LEFT CLICK"
-                android:backgroundTint="#3D5AFE"/>
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Features"
+                android:textStyle="bold"
+                android:textSize="14sp"
+                android:textColor="@android:color/black"
+                android:layout_marginBottom="8dp" />
 
-            <Button
-                android:id="@+id/btn_right_click"
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_weight="1"
-                android:layout_margin="4dp"
-                android:text="RIGHT CLICK"
-                android:backgroundTint="#FF1744"/>
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="• Real keyboard &amp; mouse input\n• Shizuku API integration\n• Touch-based mouse control\n• Compatible with Godot engine"
+                android:textSize="12sp"
+                android:textColor="#666666"
+                android:lineSpacingExtra="4dp" />
+
         </LinearLayout>
 
-        <HorizontalScrollView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="8dp">
+    </com.google.android.material.card.MaterialCardView>
 
-            <LinearLayout
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal">
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="v1.0"
+        android:textSize="12sp"
+        android:textColor="#999999"
+        android:gravity="center" />
 
-                <Button android:id="@+id/key_ctrl" android:layout_width="80dp" android:layout_height="wrap_content" android:text="CTRL" android:layout_margin="2dp"/>
-                <Button android:id="@+id/key_shift" android:layout_width="80dp" android:layout_height="wrap_content" android:text="SHIFT" android:layout_margin="2dp"/>
-                <Button android:id="@+id/key_alt" android:layout_width="80dp" android:layout_height="wrap_content" android:text="ALT" android:layout_margin="2dp"/>
-                <Button android:id="@+id/key_tab" android:layout_width="80dp" android:layout_height="wrap_content" android:text="TAB" android:layout_margin="2dp"/>
-                <Button android:id="@+id/key_esc" android:layout_width="80dp" android:layout_height="wrap_content" android:text="ESC" android:layout_margin="2dp"/>
-
-            </LinearLayout>
-        </HorizontalScrollView>
-    </LinearLayout>
-
-</androidx.constraintlayout.widget.ConstraintLayout>
+</LinearLayout>

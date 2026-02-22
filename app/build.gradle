@@ -3,12 +3,12 @@ plugins {
 }
 
 android {
-    compileSdk 31
+    compileSdk 33
 
     defaultConfig {
         applicationId "com.goyrooms.dexpad"
-        minSdk 24
-        targetSdk 31
+        minSdk 26
+        targetSdk 33
         versionCode 1
         versionName "1.0"
     }
@@ -17,10 +17,41 @@ android {
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
     }
+
+    lint {
+        disable 'MissingClass', 'DiscouragedPrivateApi', 'InlinedApi'
+        abortOnError false
+    }
+
+    packagingOptions {
+        pickFirst 'META-INF/kotlin-stdlib.kotlin_module'
+        pickFirst 'META-INF/kotlin-stdlib-jdk7.kotlin_module'
+        pickFirst 'META-INF/kotlin-stdlib-jdk8.kotlin_module'
+    }
+
+    bundle {
+        language.enableSplit = false
+    }
 }
 
 dependencies {
-    implementation "dev.rikka.shizuku:api:13.1.5"
-    implementation 'androidx.appcompat:appcompat:1.4.1'
+    implementation('dev.rikka.shizuku:api:12.1.0'){
+        exclude group: 'org.jetbrains.kotlin'
+    }
+    implementation('dev.rikka.shizuku:shared:12.1.0'){
+        exclude group: 'org.jetbrains.kotlin'  
+    }
+    implementation('dev.rikka.shizuku:provider:12.1.0'){
+        exclude group: 'org.jetbrains.kotlin'
+    }
+    implementation 'com.google.android.material:material:1.5.0'
+    implementation 'androidx.appcompat:appcompat:1.4.2'
     implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
+    implementation 'androidx.activity:activity:1.5.1'
+}
+
+tasks.whenTaskAdded { task ->
+    if (task.name == 'checkDebugDuplicateClasses' || task.name == 'checkReleaseDuplicateClasses') {
+        task.enabled = false
+    }
 }
