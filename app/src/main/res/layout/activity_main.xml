@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout 
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#121212">
+
+    <Button
+        android:id="@+id/btn_minimize"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:text="-"
+        android:backgroundTint="#444444"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"/>
+
+    <View
+        android:id="@+id/touchpad"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_margin="16dp"
+        android:background="@drawable/touchpad_bg"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toTopOf="@+id/button_row"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="TOUCHPAD AREA"
+        android:textColor="#33FFFFFF"
+        android:textSize="24sp"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toBottomOf="@+id/touchpad"
+        app:layout_constraintEnd_toEndOf="@+id/touchpad"
+        app:layout_constraintStart_toStartOf="@+id/touchpad"
+        app:layout_constraintTop_toTopOf="@+id/touchpad" />
+
+    <LinearLayout
+        android:id="@+id/button_row"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="8dp"
+        app:layout_constraintBottom_toBottomOf="parent">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="60dp"
+            android:orientation="horizontal"
+            android:weightSum="2">
+
+            <Button
+                android:id="@+id/btn_left_click"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:layout_margin="4dp"
+                android:text="LEFT CLICK"
+                android:backgroundTint="#3D5AFE"/>
+
+            <Button
+                android:id="@+id/btn_right_click"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:layout_margin="4dp"
+                android:text="RIGHT CLICK"
+                android:backgroundTint="#FF1744"/>
+        </LinearLayout>
+
+        <HorizontalScrollView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp">
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <Button android:id="@+id/key_ctrl" android:layout_width="80dp" android:layout_height="wrap_content" android:text="CTRL" android:layout_margin="2dp"/>
+                <Button android:id="@+id/key_shift" android:layout_width="80dp" android:layout_height="wrap_content" android:text="SHIFT" android:layout_margin="2dp"/>
+                <Button android:id="@+id/key_alt" android:layout_width="80dp" android:layout_height="wrap_content" android:text="ALT" android:layout_margin="2dp"/>
+                <Button android:id="@+id/key_tab" android:layout_width="80dp" android:layout_height="wrap_content" android:text="TAB" android:layout_margin="2dp"/>
+                <Button android:id="@+id/key_esc" android:layout_width="80dp" android:layout_height="wrap_content" android:text="ESC" android:layout_margin="2dp"/>
+
+            </LinearLayout>
+        </HorizontalScrollView>
+    </LinearLayout>
+
+</androidx.constraintlayout.widget.ConstraintLayout>
