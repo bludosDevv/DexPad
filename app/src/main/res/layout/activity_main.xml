@@ -4,100 +4,170 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:padding="16dp"
-    android:background="@android:color/white">
+    android:background="@color/md_theme_background"
+    android:fitsSystemWindows="true">
 
-    <TextView
+    <!-- Header -->
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="DexPad"
-        android:textSize="32sp"
-        android:textStyle="bold"
-        android:textColor="@android:color/black"
-        android:gravity="center"
-        android:layout_marginBottom="16dp" />
+        android:orientation="vertical"
+        android:background="@color/md_theme_primary"
+        android:padding="24dp"
+        android:gravity="center">
 
-    <TextView
-        android:id="@+id/status_text"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Status: Checking permissions..."
-        android:textSize="16sp"
-        android:textColor="@android:color/black"
-        android:padding="16dp"
-        android:background="#F5F5F5"
-        android:gravity="center"
-        android:layout_marginBottom="24dp" />
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="DexPad"
+            android:textSize="44sp"
+            android:textStyle="bold"
+            android:textColor="@color/md_theme_on_primary"
+            android:letterSpacing="0.02" />
 
-    <com.google.android.material.button.MaterialButton
-        android:id="@+id/btn_start_service"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Start Mouse Service"
-        android:textSize="16sp"
-        android:padding="16dp"
-        android:layout_marginBottom="12dp"
-        app:cornerRadius="8dp" />
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Mouse Overlay Control for Godot"
+            android:textSize="14sp"
+            android:textColor="@color/md_theme_on_primary"
+            android:alpha="0.8"
+            android:layout_marginTop="4dp" />
+    </LinearLayout>
 
-    <com.google.android.material.button.MaterialButton
-        android:id="@+id/btn_stop_service"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Stop Mouse Service"
-        android:textSize="16sp"
-        android:padding="16dp"
-        android:layout_marginBottom="12dp"
-        app:cornerRadius="8dp"
-        style="@style/Widget.MaterialComponents.Button.OutlinedButton" />
-
-    <com.google.android.material.button.MaterialButton
-        android:id="@+id/btn_request_permission"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Request Shizuku Permission"
-        android:textSize="16sp"
-        android:padding="16dp"
-        app:cornerRadius="8dp"
-        style="@style/Widget.MaterialComponents.Button.TextButton" />
-
-    <Space
+    <!-- Content -->
+    <ScrollView
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="1" />
-
-    <com.google.android.material.card.MaterialCardView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        app:cardCornerRadius="8dp"
-        app:cardElevation="2dp"
-        android:layout_marginBottom="16dp">
+        android:layout_weight="1">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:padding="16dp">
+            android:padding="20dp">
 
-            <TextView
+            <!-- Status Card -->
+            <com.google.android.material.card.MaterialCardView
                 android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:cardCornerRadius="12dp"
+                app:cardElevation="4dp"
+                app:strokeWidth="1dp"
+                app:strokeColor="@color/md_theme_outline"
+                android:layout_marginBottom="20dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="20dp"
+                    android:background="@color/md_theme_surface_variant">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Permission Status"
+                        android:textSize="14sp"
+                        android:textStyle="bold"
+                        android:textColor="@color/md_theme_on_surface_variant"
+                        android:layout_marginBottom="12dp" />
+
+                    <TextView
+                        android:id="@+id/status_text"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Checking permissions..."
+                        android:textSize="16sp"
+                        android:textColor="@color/md_theme_on_surface"
+                        android:textStyle="bold" />
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
+
+            <!-- Action Buttons -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Controls"
+                android:textSize="14sp"
+                android:textStyle="bold"
+                android:textColor="@color/md_theme_on_surface"
+                android:layout_marginBottom="12dp" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btn_request_permission"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Grant Shizuku Permission"
+                android:textSize="16sp"
+                android:padding="16dp"
+                app:cornerRadius="10dp"
+                app:icon="@android:drawable/ic_dialog_info"
+                android:layout_marginBottom="12dp"
+                style="@style/Widget.MaterialComponents.Button" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btn_start_service"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Start Mouse Overlay"
+                android:textSize="16sp"
+                android:padding="16dp"
+                app:cornerRadius="10dp"
+                app:icon="@android:drawable/ic_media_play"
+                android:layout_marginBottom="12dp"
+                style="@style/Widget.MaterialComponents.Button" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btn_stop_service"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Stop Mouse Overlay"
+                android:textSize="16sp"
+                android:padding="16dp"
+                app:cornerRadius="10dp"
+                app:icon="@android:drawable/ic_media_pause"
+                android:layout_marginBottom="24dp"
+                style="@style/Widget.MaterialComponents.Button.OutlinedButton" />
+
+            <!-- Features -->
+            <TextView
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Features"
-                android:textStyle="bold"
                 android:textSize="14sp"
-                android:textColor="@android:color/black"
-                android:layout_marginBottom="8dp" />
+                android:textStyle="bold"
+                android:textColor="@color/md_theme_on_surface"
+                android:layout_marginBottom="12dp" />
 
-            <TextView
+            <com.google.android.material.card.MaterialCardView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="• Real keyboard &amp; mouse input\n• Shizuku API integration\n• Touch-based mouse control\n• Compatible with Godot engine"
-                android:textSize="12sp"
-                android:textColor="#666666"
-                android:lineSpacingExtra="4dp" />
+                app:cardCornerRadius="12dp"
+                app:cardElevation="2dp"
+                app:strokeWidth="1dp"
+                app:strokeColor="@color/md_theme_outline">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="16dp">
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="🎯 Drag to move cursor\n👆 Tap to left click\n🖱️ Long press to right click\n⌨️ Real input via Shizuku\n🎮 Works with Godot Engine"
+                        android:textSize="13sp"
+                        android:textColor="@color/md_theme_on_surface"
+                        android:lineSpacingExtra="6dp"
+                        android:fontFamily="monospace" />
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
 
         </LinearLayout>
-
-    </com.google.android.material.card.MaterialCardView>
+    </ScrollView>
+</LinearLayout>
 
     <TextView
         android:layout_width="match_parent"
